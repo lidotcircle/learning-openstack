@@ -16,6 +16,14 @@ export module API {
         export module Domain {
             export const index = `${auth_endpoint}/domains`;
         }
+
+        export module Service {
+            export const index = `${auth_endpoint}/services`;
+        }
+
+        export module Endpoint {
+            export const index = `${auth_endpoint}/endpoints`;
+        }
     }
 }
 

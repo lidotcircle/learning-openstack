@@ -1,97 +1,32 @@
 import assert from "assert";
 import fetch from "node-fetch";
 import { API } from './api';
-import { get_with_token } from './identity';
-import { searchArg, tryAsBoolean } from "./util";
+import { searchArg, tryAsBoolean, patch_request, get_request, delete_request, post_request } from "./util";
 
 
 async function domain_list(token: string) //{
 {
-    console.log(JSON.stringify(JSON.parse(await get_with_token(API.Identity.Domain.index, token)), null, 4));
+    console.log(JSON.stringify(JSON.parse(await get_request(API.Identity.Domain.index, token)), null, 4));
 } //}
 
 async function domain_create(token: string, domain: {name: string, description?: string, enabled?: boolean}) //{
 {
-    token = token || process.env['OS_TOKEN'];
-
-    const resp = await fetch(API.Identity.Domain.index, {
-        method: "POST",
-        headers: {
-            "X-Auth-Token": token,
-            "Content-Type": 'application/json',
-        },
-        body: JSON.stringify({ domain: domain }),
-    });
-
-    console.log(`status: ${resp.status}, statusText: ${resp.statusText}`);
-    const msg = (await resp.buffer()).toString();
-    if(resp.status >= 400) {
-        throw new Error(JSON.stringify(JSON.parse(msg), null, 4));
-    } else {
-        console.log(JSON.stringify(JSON.parse(msg), null, 4));
-    }
+    await post_request(token, API.Identity.Domain.index, { domain: domain });
 } //}
 
 async function domain_detail(token: string, domain_id: string) //{
 {
-    token = token || process.env['OS_TOKEN'];
-
-    const resp = await fetch(API.Identity.Domain.index + `/${domain_id}`, {
-        method: "GET",
-        headers: {
-            "X-Auth-TOken": token,
-        },
-    });
-
-    console.log(`status: ${resp.status}, statusText: ${resp.statusText}`);
-    const msg = (await resp.buffer()).toString();
-    if(resp.status >= 400) {
-        throw new Error(JSON.stringify(JSON.parse(msg), null, 4));
-    } else {
-        console.log(JSON.stringify(JSON.parse(msg), null, 4));
-    }
+    console.log(JSON.stringify(JSON.parse(await get_request(API.Identity.Domain.index + `/${domain_id}`, token)), null, 4));
 } //}
 
 async function domain_delete(token: string, domain_id: string) //{
 {
-    token = token || process.env['OS_TOKEN'];
-
-    const resp = await fetch(API.Identity.Domain.index + `/${domain_id}`, {
-        method: "DELETE",
-        headers: {
-            "X-Auth-TOken": token,
-        },
-    });
-
-    console.log(`status: ${resp.status}, statusText: ${resp.statusText}`);
-    const msg = (await resp.buffer()).toString();
-    if(resp.status >= 400) {
-        throw new Error(JSON.stringify(JSON.parse(msg), null, 4));
-    }
+    await delete_request(token, API.Identity.Domain.index + `/${domain_id}`);
 } //}
 
 async function domain_modify(token: string, domain_id: string, key: string, value: string) //{
 {
-    token = token || process.env['OS_TOKEN'];
-
-    const bodyObj = {};
-    bodyObj[key] = tryAsBoolean(value);
-    const resp = await fetch(API.Identity.Domain.index + `/${domain_id}`, {
-        method: "PATCH",
-        headers: {
-            "X-Auth-TOken": token,
-            "Content-Type": 'application/json',
-        },
-        body: JSON.stringify({ domain: bodyObj }),
-    });
-
-    console.log(`status: ${resp.status}, statusText: ${resp.statusText}`);
-    let msg = (await resp.buffer()).toString();
-    if(resp.status >= 400) {
-        throw new Error(JSON.stringify(JSON.parse(msg), null, 4));
-    } else {
-        console.log(JSON.stringify(JSON.parse(msg), null, 4));
-    }
+    await patch_request(token, API.Identity.Domain.index + `/${domain_id}`, key, value);
 } //}
 
 export async function domain_handler(command: string[]) {

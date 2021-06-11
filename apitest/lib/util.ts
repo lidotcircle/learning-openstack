@@ -1,3 +1,4 @@
+export * from './request';
 
 export function searchArg(leader: string, follow: boolean, argv: string[]): [string | boolean, string[]] //{
 {

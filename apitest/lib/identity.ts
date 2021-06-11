@@ -3,6 +3,9 @@ import assert from 'assert';
 import { default as fetch } from 'node-fetch';
 import { API } from './api';
 import { domain_handler } from './identity_domain';
+import { service_handler } from './identity_service';
+import { get_request } from './util';
+import { endpoint_handler } from './identity_endpoint';
 
 
 async function create_token(): Promise<string> //{
@@ -89,27 +92,7 @@ async function delete_token(token: string): Promise<void> //{
     }
 } //}
 
-export async function get_with_token(url: string, token: string, extra_headers: object = {}): Promise<string> //{
-{
-    token = token || process.env['OS_TOKEN'];
-    const headers = Object.assign({}, extra_headers);
-    headers['X-Auth-Token'] = token;
-
-    const resp = await fetch(url, {
-        method: 'GET',
-        headers: headers,
-    });
-
-    console.log(`statusCode: ${resp.status}, statusText: ${resp.statusText}`)
-    const msg = (await resp.buffer()).toString();
-    if(resp.status >= 300) {
-        console.error(msg)
-        throw new Error('get fail');
-    }
-
-    return msg;
-} //}
-
+export const get_with_token = get_request;
 async function check_token(token: string): Promise<boolean> //{
 {
     token = token || process.env['OS_TOKEN'];
@@ -186,6 +169,14 @@ async function main(cmd: string) {
 
         case 'domain':
             await domain_handler(process.argv.slice(3));
+            break;
+
+        case 'service':
+            await service_handler(process.argv.slice(3));
+            break;
+
+        case 'endpoint':
+            await endpoint_handler(process.argv.slice(3));
             break;
 
         default:
