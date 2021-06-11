@@ -1,0 +1,36 @@
+version: '3.2'
+
+services:
+  mysql.openstack.test:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=openstack
+    volumes:
+      - mysql-datavolume:/var/lib/mysql
+      - ./mysql:/docker-entrypoint-initdb.d
+    ports:
+      - 33067:3306
+
+  adminer.openstack.test:
+    image: adminer
+    restart: always
+    ports:
+      - 18080:8080
+
+  memcached.openstack.test:
+    image: memcached
+    restart: always
+    ports:
+      - 11211:11211
+
+volumes:
+  mysql-datavolume:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: './mysqldata'
+
