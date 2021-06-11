@@ -12,9 +12,9 @@ Linux xxxxxx 5.4.0-73-generic #82-Ubuntu SMP Wed Apr 14 17:39:42 UTC 2021 x86_64
 
 #### 1. install mysql and memcached
 
-using docker, refer (docker-compose.yaml)[./docker-compose.yaml].
+using docker, refer [docker-compose.yaml](./docker-compose.yaml).
 
-mysql setup contains an (initialized file)[./mysql/keystone.sql]
+mysql setup contains an [initialized file](./mysql/keystone.sql)
 ```sql
 CREATE DATABASE keystone;
 
@@ -152,5 +152,5 @@ to do something like creating new projects, new users and roles
 
 ### install horizon
 
-just refer (official document)[https://docs.openstack.org/horizon/stein/install/install-ubuntu.html]
+just refer [official document](https://docs.openstack.org/horizon/stein/install/install-ubuntu.html)
 

@@ -2,6 +2,7 @@ import 'process';
 import assert from 'assert';
 import { default as fetch } from 'node-fetch';
 import { API } from './api';
+import { domain_handler } from './identity_domain';
 
 
 async function create_token(): Promise<string> //{
@@ -88,21 +89,20 @@ async function delete_token(token: string): Promise<void> //{
     }
 } //}
 
-async function get_with_token(url: string, token: string): Promise<string> //{
+export async function get_with_token(url: string, token: string, extra_headers: object = {}): Promise<string> //{
 {
     token = token || process.env['OS_TOKEN'];
+    const headers = Object.assign({}, extra_headers);
+    headers['X-Auth-Token'] = token;
 
     const resp = await fetch(url, {
         method: 'GET',
-        headers: {
-            'X-Auth-Token': token,
-            'X-Subject-Token': token,
-        },
+        headers: headers,
     });
 
     console.log(`statusCode: ${resp.status}, statusText: ${resp.statusText}`)
     const msg = (await resp.buffer()).toString();
-    if(resp.status != 200) {
+    if(resp.status >= 300) {
         console.error(msg)
         throw new Error('get fail');
     }
@@ -134,7 +134,7 @@ async function check_token(token: string): Promise<boolean> //{
 
 async function get_token_info(token: string): Promise<void> //{
 {
-    console.log(JSON.parse(await get_with_token(API.Identity.token, token)));
+    console.log(JSON.parse(await get_with_token(API.Identity.token, token, {"X-Subject-Token": token})));
 } //}
 
 // require a domain scope token
@@ -182,6 +182,10 @@ async function main(cmd: string) {
             break;
         case 'get_system':
             await get_system(process.argv.length > 3 ? process.argv[3] : null);
+            break;
+
+        case 'domain':
+            await domain_handler(process.argv.slice(3));
             break;
 
         default:

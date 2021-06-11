@@ -12,6 +12,10 @@ export module API {
         export const projects = `${auth_endpoint}/auth/projects`;
         export const domains  = `${auth_endpoint}/auth/domains`;
         export const system   = `${auth_endpoint}/auth/system`;
+
+        export module Domain {
+            export const index = `${auth_endpoint}/domains`;
+        }
     }
 }
 
