@@ -27,7 +27,9 @@ async function service_delete(token: string, service_id: string) //{
 
 async function service_modify(token: string, service_id: string, key: string, value: string) //{
 {
-    await patch_request(token, API.Identity.Service.index + `/${service_id}`, key, value);
+    const obj = { };
+    obj[key] = tryAsBoolean(value);
+    await patch_request(token, API.Identity.Service.index + `/${service_id}`, { service: obj });
 } //}
 
 

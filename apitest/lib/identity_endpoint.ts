@@ -15,9 +15,13 @@ async function endpoint_create(token: string, endpoint: {url: string, interface:
     await post_request(token, API.Identity.Endpoint.index, { endpoint: endpoint });
 } //}
 
-async function endpoint_detail(token: string, endpoint_id: string) //{
+async function endpoint_detail(token: string, endpoint_id: string, silent: boolean = false) //{
 {
-    console.log(JSON.stringify(JSON.parse(await get_with_token(API.Identity.Endpoint.index + `/${endpoint_id}`, token)), null, 4));
+    const vn = JSON.parse(await get_with_token(API.Identity.Endpoint.index + `/${endpoint_id}`, token));
+    if (!silent) {
+        console.log(JSON.stringify(vn, null, 4));
+    }
+    return vn;
 } //}
 
 async function endpoint_delete(token: string, endpoint_id: string) //{
@@ -27,7 +31,9 @@ async function endpoint_delete(token: string, endpoint_id: string) //{
 
 async function endpoint_modify(token: string, endpoint_id: string, key: string, value: string) //{
 {
-    await patch_request(token, API.Identity.Endpoint.index + `/${endpoint_id}`, key, value);
+    const ep = {};
+    ep[key] = tryAsBoolean(value);
+    await patch_request(token, API.Identity.Endpoint.index + `/${endpoint_id}`, { endpoint: ep });
 } //}
 
 
@@ -54,7 +60,7 @@ export async function endpoint_handler(command: string[]) {
                 interface: cmd[1],
                 service_id: cmd[2],
                 region_id: cmd[4],
-                enabled: cmd[3] == undefined || cmd[2] == 'true',
+                enabled: cmd[3] == undefined || cmd[3] == 'true',
             });
         } break;
 

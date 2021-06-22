@@ -26,7 +26,9 @@ async function domain_delete(token: string, domain_id: string) //{
 
 async function domain_modify(token: string, domain_id: string, key: string, value: string) //{
 {
-    await patch_request(token, API.Identity.Domain.index + `/${domain_id}`, key, value);
+    const dom = {};
+    dom[key] = tryAsBoolean(value);
+    await patch_request(token, API.Identity.Domain.index + `/${domain_id}`, { domain: dom });
 } //}
 
 export async function domain_handler(command: string[]) {

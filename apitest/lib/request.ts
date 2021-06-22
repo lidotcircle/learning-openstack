@@ -2,19 +2,17 @@ import fetch from "node-fetch";
 import { tryAsBoolean } from "./util";
 
 
-export async function patch_request(token: string, url: string, key: string, value: string) //{
+export async function patch_request(token: string, url: string, obj: object) //{
 {
     token = token || process.env['OS_TOKEN'];
 
-    const bodyObj = {};
-    bodyObj[key] = tryAsBoolean(value);
     const resp = await fetch(url, {
         method: "PATCH",
         headers: {
             "X-Auth-TOken": token,
             "Content-Type": 'application/json',
         },
-        body: JSON.stringify({ domain: bodyObj }),
+        body: JSON.stringify(obj),
     });
 
     console.log(`status: ${resp.status}, statusText: ${resp.statusText}`);
